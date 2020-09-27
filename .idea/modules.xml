@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/prestashop-docker-debugging-master.iml" filepath="$PROJECT_DIR$/.idea/prestashop-docker-debugging-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ec_xmlfeed.iml" filepath="$PROJECT_DIR$/.idea/ec_xmlfeed.iml" />
     </modules>
   </component>
 </project>

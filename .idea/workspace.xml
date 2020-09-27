@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c92a11b1-5420-4e60-b387-8c825c88b5c3" name="Default Changelist" comment="" />
+    <list default="true" id="c92a11b1-5420-4e60-b387-8c825c88b5c3" name="Default Changelist" comment="Pierwszy commit:)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/1.7/prestashop/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/docker/1.7/prestashop/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ec_xmlfeed/ec_xmlfeed.php" beforeDir="false" afterPath="$PROJECT_DIR$/ec_xmlfeed/ec_xmlfeed.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -116,12 +120,25 @@
       <updated>1601130006628</updated>
       <workItem from="1601130007683" duration="1851000" />
       <workItem from="1601134068695" duration="31651000" />
-      <workItem from="1601174619450" duration="4224000" />
+      <workItem from="1601174619450" duration="5486000" />
+      <workItem from="1601189174917" duration="179000" />
     </task>
+    <task id="LOCAL-00001" summary="Pierwszy commit:)">
+      <created>1601179103235</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1601179103235</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Pierwszy commit:)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pierwszy commit:)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="540" y="194" width="1198" height="690" key="#Servers" timestamp="1601177525485">
@@ -144,10 +161,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="736" y="432" key="ComposerInitDialogKey/0.0.1920.1040@0.0.1920.1040" timestamp="1601134143346" />
-    <state x="764" y="418" key="Github.ShareDialog" timestamp="1601178693820">
+    <state x="764" y="418" key="Github.ShareDialog" timestamp="1601178890588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="764" y="418" key="Github.ShareDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1601178693820" />
+    <state x="764" y="418" key="Github.ShareDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1601178890588" />
     <state x="670" y="225" key="Github.UntrackedFilesDialog" timestamp="1601178747580">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -212,10 +229,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1601157035125" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1601178817516">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1601179160588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1601178817516" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1601179160588" />
     <state x="752" y="378" width="490" height="396" key="scopes" timestamp="1601136139503">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
