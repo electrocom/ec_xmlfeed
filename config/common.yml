@@ -20,3 +20,9 @@ services:
     arguments:
       - '@doctrine.dbal.default_connection'
       - '%database_prefix%'
+
+  xmlfeed_xml_feeds_xml_data_mapper_product:
+    class: PrestaShop\Module\Ec_Xmlfeed\XMLDataMapper\XMLDataMapperProduct
+    arguments:
+      - '@doctrine.dbal.default_connection'
+      - '%database_prefix%'

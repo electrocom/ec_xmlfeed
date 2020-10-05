@@ -27,11 +27,18 @@ class XmlFeedsRepository{
             ->from($this->databasePrefix . 'xml_feeds', 'xmf')
             ->andWhere('xmf.active = :active')
             ->setParameter('active', 1);
+
         return $qb->execute()->fetchAll();
     }
 
 
+function getRep(){
 
+    $entityManager = $this->get('doctrine.orm.entity_manager');
+    $testRepository = $entityManager->getRepository(PrestaShop\Module\Ec_Xmlfeed\Entity\XmlFeeds::class);
+    $test = $testRepository->findAll();
+    return $test;
+}
 
 
 }

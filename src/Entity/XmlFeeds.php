@@ -2,8 +2,10 @@
 
 namespace PrestaShop\Module\Ec_Xmlfeed\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
 
 /**
  * @ORM\Table()
@@ -11,6 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class XmlFeeds
 {
+
+ public function __construct()
+ {
+     $this->fields = new Collection();
+ }
+
     /**
      * @var int
      *
@@ -35,6 +43,13 @@ class XmlFeeds
     {
         $this->id = $id;
     }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="feed_name" , type="string", length=254)
+     */
+    private $feed_name;
 
     /**
      * @return string
@@ -99,5 +114,23 @@ class XmlFeeds
         $this->active = $active;
     }
 
+    /**
+     * @ORM\OneToMany(targetEntity="XmlMapFields", mappedBy="feed")
+     */
+    protected $fields;
+
+
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @param ArrayCollection $fields
+     */
+    public function setFields( $fields): void
+    {
+        $this->fields = $fields;
+    }
 
 }

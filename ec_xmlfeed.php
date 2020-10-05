@@ -51,7 +51,25 @@ class Ec_Xmlfeed extends Module
     }
 
     public function install()
-    {   $sql="CREATE TABLE  IF NOT EXISTS "._DB_PREFIX_."xml_map_fields ( `id_xml_map_fields` INT NOT NULL AUTO_INCREMENT , `shop_field_name` VARCHAR(255) NOT NULL , `xml_field_path_name` VARCHAR(255) NOT NULL , `position` INT NOT NULL , `active` INT NOT NULL , PRIMARY KEY (`id_xml_map_fields`)) ENGINE = InnoDB;";
+    {   //$sql="CREATE TABLE  IF NOT EXISTS "._DB_PREFIX_."xml_map_fields ( `id_xml_map_fields` INT NOT NULL AUTO_INCREMENT , `shop_field_name` VARCHAR(255) NOT NULL , `xml_field_path_name` VARCHAR(255) NOT NULL , `position` INT NOT NULL , `active` INT NOT NULL ,`type` ENUM('node','attr') NOT NULL, PRIMARY KEY (`id_xml_map_fields`)) ENGINE = InnoDB;";
+
+       $sql="
+CREATE TABLE  IF NOT EXISTS "._DB_PREFIX_."xml_map_fields  (
+  `id_xml_map_fields` int(11) NOT NULL,
+  id_xml_feeds int(11) NOT NULL,
+  `shop_field_name` varchar(255) NOT NULL,
+  `xml_field_path_name` varchar(255) NOT NULL,
+  `custom_value` varchar(255) NOT NULL,
+  `type` enum('node','attr','withchild','product_node','feature_node','array') NOT NULL,
+  `position` int(11) NOT NULL,
+  `active` int(11) NOT NULL
+);
+ALTER TABLE `ps_xml_map_fields`
+  ADD PRIMARY KEY (`id_xml_map_fields`);
+
+ALTER TABLE `ps_xml_map_fields`
+  MODIFY `id_xml_map_fields` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+";
         Db::getInstance()->execute($sql);
 
         $sql="CREATE TABLE  IF NOT EXISTS "._DB_PREFIX_."xml_feeds ( `id_xml_feeds` INT NOT NULL AUTO_INCREMENT ,  `feed_name` VARCHAR(255) NOT NULL ,  `xml_inject_path` VARCHAR(255) NOT NULL ,  `active` TINYINT(1) NOT NULL ,    PRIMARY KEY  (`id_xml_feeds`)) ENGINE = InnoDB;";

@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Ec_Xmlfeed\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * @ORM\Table()
@@ -23,14 +24,83 @@ class XmlMapFields
      */
     private $id;
 
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id_xml_feeds", type="integer")
+      */
+    private $id_xml_feeds ;
+
+    /**
+     * @return int
+     */
+    public function getIdXmlFeeds(): int
+    {
+        return $this->id_xml_feeds;
+    }
+
+    /**
+     * @param int $id_xml_feeds
+     */
+    public function setIdXmlFeeds(int $id_xml_feeds): void
+    {
+        $this->id_xml_feeds = $id_xml_feeds;
+    }
+
+
     /**
      * @var string
      *
-     * @ORM\Column(name="shop_field_name" , type="string", length=254)
+     * @ORM\Column(name="shop_field_name" , type="string", length=255)
      */
     private $shop_field_name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="custom_value" , type="string", length=255)
+     */
+    private $custom_value;
 
+    /**
+     * @return string
+     */
+    public function getCustomValue()
+    {
+        return $this->custom_value;
+    }
+
+    /**
+     * @param string $custom_value
+     */
+    public function setCustomValue($custom_value)
+    {
+        $this->custom_value = $custom_value;
+    }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type" , type="string", columnDefinition="ENUM('node', 'attr')")
+     */
+    private $type;
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
 
     /**
      * @return int
@@ -135,6 +205,25 @@ class XmlMapFields
         $this->active = $active;
     }
 
+    /**
+     * @ORM\ManyToOne(targetEntity="XmlFeeds", inversedBy="fields")
+     * @ORM\JoinColumn(name="id_xml_feeds", referencedColumnName="id_xml_feeds")
+     */
+    private $feed;
 
+    /**
+     * @return mixed
+     */
+    public function getFeed()
+    {
+        return $this->feed;
+    }
 
+    /**
+     * @param mixed $feed
+     */
+    public function setFeed($feed): void
+    {
+        $this->feed = $feed;
+    }
 }
