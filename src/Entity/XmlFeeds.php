@@ -6,7 +6,7 @@ use Doctrine\Common\Collections;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\JoinColumn;
-
+use Doctrine\ORM\Mapping\OrderBy;
 /**
  * @ORM\Table()
  * @ORM\Entity()
@@ -67,29 +67,7 @@ class XmlFeeds
         $this->feed_name = $feed_name;
     }
 
-    /**
-     * @return string
-     */
-    public function getXmlInjectPath(): string
-    {
-        return $this->xml_inject_path;
-    }
 
-    /**
-     * @param string $xml_inject_path
-     */
-    public function setXmlInjectPath(string $xml_inject_path): void
-    {
-        $this->xml_inject_path = $xml_inject_path;
-    }
-
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="xml_inject_path" , type="string", length=254)
-     */
-    private $xml_inject_path;
 
     /**
      * @var string
@@ -116,6 +94,7 @@ class XmlFeeds
 
     /**
      * @ORM\OneToMany(targetEntity="XmlMapFields", mappedBy="feed")
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     protected $fields;
 

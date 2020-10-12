@@ -8,15 +8,16 @@ class XmlFeedsRepository{
 
     private $connection;
     private $databasePrefix;
-
+    private $entityManager;
     public function __construct(
         Connection $connection,
-        $databasePrefix
+        $databasePrefix,
+        $entityManager
     )
     {
         $this->connection = $connection;
         $this->databasePrefix = $databasePrefix;
-
+        $this->entityManager=$entityManager;
     }
 
     function getXmlFeeds()
@@ -32,11 +33,10 @@ class XmlFeedsRepository{
     }
 
 
-function getRep(){
+public function getFeed($name){
 
-    $entityManager = $this->get('doctrine.orm.entity_manager');
-    $testRepository = $entityManager->getRepository(PrestaShop\Module\Ec_Xmlfeed\Entity\XmlFeeds::class);
-    $test = $testRepository->findAll();
+    $testRepository = $this->entityManager->getRepository(\PrestaShop\Module\Ec_Xmlfeed\Entity\XmlFeeds::class);
+    $test = $testRepository->findOneBy(array('feed_name' => $name));
     return $test;
 }
 

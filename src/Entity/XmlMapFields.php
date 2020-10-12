@@ -82,25 +82,26 @@ class XmlMapFields
     /**
      * @var string
      *
-     * @ORM\Column(name="type" , type="string", columnDefinition="ENUM('node', 'attr')")
+     * @ORM\Column(name="cdata" , type="integer")
      */
-    private $type;
+    private $cdata;
 
     /**
-     * @return string
+     * @return integer
      */
-    public function getType()
+    public function getCdata()
     {
-        return $this->type;
+        return $this->cdata;
     }
 
     /**
-     * @param string $type
+     * @param integer $cdata
      */
-    public function setType($type)
+    public function setCdata( $cdata): void
     {
-        $this->type = $type;
+        $this->cdata = $cdata;
     }
+
 
     /**
      * @return int

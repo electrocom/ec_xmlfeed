@@ -1,5 +1,6 @@
 <?php
 
+use Doctrine\DBAL\Connection;
 use \FluidXml\FluidXml;
 use \FluidXml\FluidNamespace;
 use function \FluidXml\fluidxml;
@@ -16,49 +17,120 @@ class Ec_XmlfeedGenerateModuleFrontController extends ModuleFrontController
 
     /** @var bool */
     public $ajax;
+    private $xml=null;
+    private $xmlDataMaps;
+
+    public function postProcess() {
+        parent::postProcess();
+        $id_customer = (int)Tools::getValue('id_customer');
+        if(!$id_customer || $id_customer < 0){
+            die('bad $id_customer');
+        }
+        $xTokenOk = Tools::getValue('token') == $this->module->makeToken($id_customer);
+        if(!$xTokenOk){
+            die('bad xtoken');
+        }
+        $customer = new Customer($id_customer);
+        if (!Validate::isLoadedObject($customer)){
+            die('bad customer object');
+        }
+        $customer->logged = 1;
+        $this->context->customer = $customer;
+        $this->context->cookie->id_customer = $customer->id;
+        $this->context->cookie->customer_lastname = $customer->lastname;
+        $this->context->cookie->customer_firstname = $customer->firstname;
+        $this->context->cookie->logged = 1;
+        $this->context->cookie->check_cgv = 1;
+        $this->context->cookie->is_guest = $customer->isGuest();
+        $this->context->cookie->passwd = $customer->passwd;
+        $this->context->cookie->email = $customer->email;
+    }
 
     public function display()
     {
-      $repProducts= $this->container->get('xmlfeed_xml_feeds_xml_data_mapper_product');
+        if (!$this->context->customer->isLogged()){
+            die('ACCESS DENIED');
+        }
+
+        $this->xmlDataMaps= $this->get('xmlfeed_xml_feeds_xml_data_mapper'); // Dane produktów
+      $repFeeds= $this->container->get('xmlfeed_xml_feeds_repository'); //nazwy generowanych struktu
+      $feedStruct = $repFeeds->getFeed('Ceneo');
+        $xmlStruct = $feedStruct->getFields();
 
 
-      $entityManager = $this->container->get('doctrine.orm.entity_manager');
-      $testRepository = $entityManager->getRepository(PrestaShop\Module\Ec_Xmlfeed\Entity\XmlFeeds::class);
-      $feed = $testRepository->findOneBy(array('feed_name' => 'Ceneo'));
-        $fields = $feed->getFields();
+            $this->buildXmlTree($xmlStruct,'',$this->xmlDataMaps);
 
-        $count=0;
-        $current_node=null;
-        $xml=null;
-        foreach ($fields as $field){
-            if($count==0){
-                $current_node=$xml=  FluidXml::new($field->getXmlFieldPathName(), [/* options */]);
-               $count++;
-               continue;
+
+        header("Content-type: text/xml");
+        echo $this->xml->xml();
+
+    }
+
+
+    private function buildXmlTree( &$xmlStruct,$xpath='',$current_data=null)
+    {
+
+        foreach ($xmlStruct as $key =>$field)
+        {
+            $path=$field->getXmlFieldPathName();
+            $is_arr=0;
+            $path=str_replace('[]','',$path,$is_arr);
+
+            if($xpath!=''
+                &&!strstr($path,$xpath))
+                continue;
+
+
+
+            if($is_arr)
+            {
+            $tmp=$current_data->getval($field->getShopFieldName());
+
+                foreach ($tmp as $key2=>$value)
+                {
+                    $field->getShopFieldName();
+                    $this->addToXmlTree($path);
+                    $this->buildXmlTree($xmlStruct,$path.'/',$tmp);
+                }
+                return;
+            }else {
+                $v=empty($field->getCustomValue())?$current_data->getval($field->getShopFieldName()):$field->getCustomValue();
+                $this->addToXmlTree($path, $v,$field->getCdata());
             }
 
-       $path=$field->getXmlFieldPathName();
 
-        if(preg_match("/^@/", $path)){
-            $current_node->setAttribute(ltrim( $path,"@"),'1');
         }
-else{
-    $explode_path=explode('/',$path);
-    $t= explode('/',$path);
-    array_pop($t);;
-    $q_dir=implode('/',$t);
-    $current_node= $xml->query('/'.$q_dir.'[last()]');
-    $current_node= $current_node->add(end($explode_path),true);
-}
-
-
-$count++;
-    }
-      echo  $xml->xml();
-
-
-
     }
 
+
+    private function addToXmlTree($path,$data='',$cdata=0)
+    {
+
+        if ($this->xml == null) {
+            $current_node = $this->xml = FluidXml::new($path);
+            return;
+        }
+
+        if($data=='')
+            $data=null;
+        $explode_path = explode('/', $path);
+        $t = explode('/', $path);
+        array_pop($t);
+
+        $t = array_map(function ($str) {
+            return $str . '[last()]';
+        }, $t);
+        $q_dir = implode('/', $t);
+        $q_dir . end($explode_path) . PHP_EOL;
+        $current_node = $this->xml->query('/' . $q_dir . '[last()]');
+
+        if (strstr($path, "@"))
+            $current_node-> attr (substr($path, strpos($path, "@") + 1), $data);
+        else
+            if($cdata)
+            $current_node->add(end($explode_path),  true)->setCdata($data);
+            else
+            $current_node->add(end($explode_path),  true)->setText($data);
+    }
 
 }

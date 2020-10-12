@@ -1,37 +1,71 @@
 <?php
 namespace PrestaShop\Module\Ec_Xmlfeed\XMLDataMapper;
 
-class XMLDataMapper{
-    private array $arrayDataMapper = [];
-    private array $products = [];
+use Doctrine\DBAL\Connection;
 
-    public function __construct($products)
+class XMLDataMapper implements  \Iterator{
+    private  $arrayDataMapper = [];
+    private  $products = [];
+    private  $connection;
+    private  $databasePrefix;
+
+
+
+
+    public function __construct(
+        Connection $connection,
+        $databasePrefix
+    ) {
+        $this->connection = $connection;
+        $this->databasePrefix = $databasePrefix;
+
+    }
+
+    function getval($name){
+
+
+        switch ($name)
+        {
+            case 'products';
+            return new XMLDataMapperProduct($this->connection,$this->databasePrefix);
+
+            default:
+                return  $this;
+
+        }
+
+
+    }
+
+    public function current()
     {
-        $this->arrayDataMapper=array(
-            "products" => function()  {$this->products->next();},
-            "products.id" => function(){},
-            "products.url" => function(){},
-            "products.price" => function(){},
-            "products.available" => function(){},
-            "products.price" => function(){},
-            "products.quantity" => function(){},
-            "products.path_cat" => function(){},
-            "products.short_description" => function(){},
-            "products.long_description" => function(){},
-            "products.features" => function(){},
-            "products.features.name" => function(){},
-            "products.features.value" => function(){},
-            "products.images" => function(){},
-            "products.images.url" => function(){},
-            "products.images.cover.url" => function(){},
-        );
-
-        $this->products=$products;
+        // TODO: Implement current() method.
+      return  false;
     }
 
-    function getMapperData($fieldName){
-
+    public function next()
+    {
+        // TODO: Implement next() method.
+        return  false;
     }
 
+    public function key()
+    {
+        // TODO: Implement key() method.
+    }
 
+    public function valid()
+    {
+        return  false;
+    }
+
+    public function rewind()
+    {
+        // TODO: Implement rewind() method.
+        return  false;
+    }
+
+    public function  __toString(){
+        return '';
+    }
 }

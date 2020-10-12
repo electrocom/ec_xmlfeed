@@ -26,6 +26,7 @@ class XmlMapFieldsRepository
         $qb ->addSelect('xmf.* ')
             ->from($this->databasePrefix . 'xml_map_fields', 'xmf')
             ->andWhere('xmf.active = :active')
+            ->addOrderBy('position','ASC')
             ->setParameter('active', 1);
         return $qb->execute()->fetchAll();
     }

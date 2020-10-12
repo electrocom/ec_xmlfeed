@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Ec_Xmlfeed\XMLDataMapper;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\Module\Ec_Xmlfeed\XMLDataMapper\XMLDataMapperImage;
+use PrestaShop\PrestaShop\Adapter\Tools;
 
 
 class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
@@ -13,15 +14,19 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
     private  $context;
     private  $product;
     private  $id_lang;
+    private  $connection;
+    private  $databasePrefix;
 
     /**
-     * @var void
+     *
+     * @param Connection $connection
+     * @param $databasePrefix
      */
-    private $databasePrefix;
+
 
 
     public function __construct(
-        Connection $connection,
+         $connection,
         $databasePrefix
     ) {
         $this->connection = $connection;
@@ -32,7 +37,9 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
         $this->position = 0;
     }
 
-
+    public function  __toString(){
+        return '';
+    }
    private function LoadProducts()
     {
         /** @var QueryBuilder $qb */
@@ -50,7 +57,7 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
     function getval($name){
 
 
-        switch ($name) // sprawdzamy zmienną $a
+        switch ($name)
         {
             case 'id':
              return  $this->productsId[$this->position];
@@ -58,10 +65,12 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
                 return  $this->product->getLink();
             case 'price':
                 return  $this->product->getPrice();
+            case 'price_wihout_tax':
+                return  $this->product->getPrice(false);
             case 'active':
                 return  $this->product->active;
             case 'quantity':
-                return  $this->product::getQuantity($this->current());
+                return  $this->product::getQuantity($this->productsId[$this->position]);
             case 'description':
                 return  $this->product->description[$this->id_lang];
             case 'description_short':
@@ -73,15 +82,31 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
             case 'ean13':
                 return $this->product->ean13;
             case 'manufacturer_name':
-                return $this->product->manufacturer_name;
+                return $this->product->getWsManufacturerName();
             case 'images':
-                return new XMLDataMapperImage($this->productsId[$this->position],$this->databasePrefix);
+                return new XMLDataMapperImage($this->productsId[$this->position],$this->databasePrefix,$this);
             case 'image_cover':
-                return (new XMLDataMapperImage($this->productsId[$this->position],$this->databasePrefix))->getCover();
+                return (new XMLDataMapperImage($this->productsId[$this->position],$this->databasePrefix,$this))->getCover();
+            case  'products':
+                return  new XMLDataMapperProduct($this->connection,$this->databasePrefix);
+
+            //case 'default_category_name':
+            case 'default_category_id':
+                return  $this->product->getDefaultCategory();
+
+            case 'category_path':
+                $category = new \Category($this->product->getDefaultCategory(), $this->id_lang,$this->context->shop->id);
+                $path=array_reverse($category->getParentsCategories());
+                $path_str='';
+                foreach ($path as $value)
+                $path_str.=$value['name'].'/';
+                return $path_str;
+
+
 
             default:
-                echo "Żadna z powyższych";
-                break;
+             return   $name;
+
         }
 
 
@@ -101,6 +126,7 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
     public function next()
     {
         $this->position++;
+      //  echo "next". $this->position;
     }
 
     public function key()
@@ -111,6 +137,7 @@ class XMLDataMapperProduct implements \Countable, \Iterator, \ArrayAccess
     public function valid()
     {
         $tmp = isset($this->productsId[$this->position]);
+      //  echo "valid".$tmp;
         return $tmp;
     }
 

@@ -11,20 +11,24 @@ class XMLDataMapperImage implements \Countable, \Iterator, \ArrayAccess
     private  $product;
     private  $id_lang;
     private $databasePrefix;
-
+    private $products;
     public function __construct(
        $id_product,
-        $databasePrefix
+        $databasePrefix,
+    $products
     ) {
 
         $this->databasePrefix = $databasePrefix;
         $this->context = \Context::getContext();
         $this->id_lang=$this->context->language->id;
         $this->LoadImages($id_product);
-
+        $this->products=$products;
         $this->position = 0;
     }
 
+    public function  __toString(){
+        return '';
+    }
 
     private function LoadImages($id_product)
    {
@@ -43,6 +47,11 @@ class XMLDataMapperImage implements \Countable, \Iterator, \ArrayAccess
                 $id_image= $this->images[$this->position]['id_image'];
                 $uriPath = _THEME_PROD_DIR_ . \Image::getImgFolderStatic($this->images[$this->position]['id_image']) . $id_image.'.jpg';
                 return  $this->context->link->protocol_content.\Tools::getMediaServer($uriPath).$uriPath;
+
+            case 'cover':
+                $id_image= $this->images[$this->position]['id_image'];
+                $uriPath = _THEME_PROD_DIR_ . \Image::getImgFolderStatic($this->images[$this->position]['id_image']) . $id_image.'.jpg';
+                return  $this->context->link->protocol_content.\Tools::getMediaServer($uriPath).$uriPath;
         }
 
 
@@ -58,7 +67,9 @@ class XMLDataMapperImage implements \Countable, \Iterator, \ArrayAccess
             }
 
         }
-        return $this;
+        $id_image= $this->images[$this->position]['id_image'];
+        $uriPath = _THEME_PROD_DIR_ . \Image::getImgFolderStatic($this->images[$this->position]['id_image']) . $id_image.'.jpg';
+        return  $this->context->link->protocol_content.\Tools::getMediaServer($uriPath).$uriPath;
                                 }
 
     public function current()
