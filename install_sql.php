@@ -6,10 +6,10 @@ public  static  function install_ceneo(){
 
     $sql="
 START TRANSACTION;
-INSERT INTO `ps_xml_feeds` (`id_xml_feeds`, `feed_name`, `active`) VALUES
+INSERT INTO `"._DB_PREFIX_."xml_feeds` (`id_xml_feeds`, `feed_name`, `active`) VALUES
 (1, 'ceneo', 1);
 
-INSERT INTO ps_xml_map_fields (id_xml_map_fields, id_xml_feeds, shop_field_name, xml_field_path_name, custom_value, cdata, `position`, active) VALUES
+INSERT INTO "._DB_PREFIX_."xml_map_fields (id_xml_map_fields, id_xml_feeds, shop_field_name, xml_field_path_name, custom_value, cdata, `position`, active) VALUES
 (7, 1, '', 'offers', '', 0, 1, 1),
 (9, 1, '', 'offers/@version', '1', 0, 3, 1),
 (10, 1, 'products', 'offers/o[]', '', 0, 4, 1),
@@ -37,5 +37,35 @@ COMMIT;
 ";
     Db::getInstance()->execute($sql);
 }
+
+    public  static  function install_sql_struct(){
+
+$sql="
+START TRANSACTION;
+  CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_feeds` (
+  `id_xml_feeds` int(11) NOT NULL AUTO_INCREMENT,
+  `feed_name` varchar(255) NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id_xml_feeds`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_map_fields` (
+  `id_xml_map_fields` int(11) NOT NULL AUTO_INCREMENT,
+  `id_xml_feeds` int(11) NOT NULL,
+  `shop_field_name` varchar(255) NOT NULL,
+  `xml_field_path_name` varchar(255) NOT NULL,
+  `custom_value` varchar(255) NOT NULL,
+  `cdata` tinyint(1) NOT NULL,
+  `position` int(11) NOT NULL,
+  `active` int(11) NOT NULL,
+  PRIMARY KEY (`id_xml_map_fields`)
+) ENGINE=InnoDB;
+COMMIT;
+";
+
+
+
+        Db::getInstance()->execute($sql);
+    }
 
 }

@@ -53,32 +53,7 @@ class Ec_Xmlfeed extends Module
 
     public function install()
     {
-       $sql="
-CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_map_fields` (
-  `id_xml_map_fields` int(11) NOT NULL AUTO_INCREMENT,
-  `id_xml_feeds` int(11) NOT NULL,
-  `shop_field_name` varchar(255) NOT NULL,
-  `xml_field_path_name` varchar(255) NOT NULL,
-  `custom_value` varchar(255) NOT NULL,
-  `cdata` tinyint(1) NOT NULL,
-  `position` int(11) NOT NULL,
-  `active` int(11) NOT NULL,
-  PRIMARY KEY (`id_xml_map_fields`)
-) ENGINE=InnoDB
-";
-        Db::getInstance()->execute($sql);
-
-        $sql="
-  CREATE TABLE IF NOT EXISTS `ps_xml_feeds` (
-  `id_xml_feeds` int(11) NOT NULL AUTO_INCREMENT,
-  `feed_name` varchar(255) NOT NULL,
-  `active` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id_xml_feeds`)
-) ENGINE=InnoDB
-        ;";
-        Db::getInstance()->execute($sql);
-
-
+        InstallSql::install_sql_struct();
         InstallSql::install_ceneo();
 
         return parent::install()
