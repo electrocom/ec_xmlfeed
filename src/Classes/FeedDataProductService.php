@@ -29,6 +29,7 @@ class FeedDataProductService{
     }
 
    private function getDataSql(){
+       $id_shop = (int)Context::getContext()->shop->id;
         $sql_join_ceneo ='';
         $sql_where_ceneobestprice='';
         $sql_criteria='';
@@ -45,7 +46,7 @@ INNER JOIN `ps_stock_available` on `ps`.`id_product`=`ps_stock_available`.`id_pr
 '.$sql_join_ceneo.'
 WHERE ps.`price` > 0
  AND ps.`active` = 1
- AND ps.id_shop=1 '.$sql_criteria.$sql_where_ceneobestprice;
+ AND ps.id_shop='.$id_shop.' '.$sql_criteria.$sql_where_ceneobestprice;
         $data = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
         return $data;
     }
