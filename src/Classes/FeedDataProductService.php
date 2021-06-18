@@ -29,7 +29,7 @@ class FeedDataProductService{
     }
 
    private function getDataSql(){
-       $id_shop = (int)Context::getContext()->shop->id;
+       $id_shop = (int)\Context::getContext()->shop->id;
         $sql_join_ceneo ='';
         $sql_where_ceneobestprice='';
         $sql_criteria='';
