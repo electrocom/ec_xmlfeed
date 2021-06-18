@@ -29,7 +29,7 @@ class FeedDataProductService{
     }
 
    private function getDataSql(){
-       $id_shop = (int)\Context::getContext()->shop->id;
+       $id_shop = (int)\Shop::getContextShopID();
         $sql_join_ceneo ='';
         $sql_where_ceneobestprice='';
         $sql_criteria='';
@@ -40,7 +40,7 @@ class FeedDataProductService{
 
         $sql_criteria = $this->MakeIn( $this->filter_id_manufacturers,'id_manufacturer');
         $sql_criteria .= $this->MakeIn( $this->filter_id_categories,'id_category');
-        $sql='SELECT ps.* FROM `ps_product_shop` ps 
+        $sql='SELECT ps.* FROM `ps_product_shop` ps
 INNER JOIN `ps_product` p ON p.id_product=ps.id_product
 INNER JOIN `ps_stock_available` on `ps`.`id_product`=`ps_stock_available`.`id_product` AND ps.id_shop=ps_stock_available.id_shop
 '.$sql_join_ceneo.'

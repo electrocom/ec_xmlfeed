@@ -42,7 +42,7 @@ public function postProcess() {
 
 public function display()
     {
-
+        set_time_limit(0);
 
 
         $feedGenerator = new FeedGenerator($this->formatxml);
