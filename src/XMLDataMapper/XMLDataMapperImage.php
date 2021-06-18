@@ -60,6 +60,9 @@ class XMLDataMapperImage implements \Countable, \Iterator, \ArrayAccess
 
     public function getCover(){
 
+        if(empty($this->images))
+            return '';
+
         foreach ($this->images as $key=>$cover){
             if ($cover['cover']==1)
             {

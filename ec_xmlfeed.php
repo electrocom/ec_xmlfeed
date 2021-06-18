@@ -54,7 +54,7 @@ class Ec_Xmlfeed extends Module
     public function install()
     {
         InstallSql::install_sql_struct();
-        InstallSql::install_ceneo();
+
 
         return parent::install()
             && $this->registerHook('displayMyAccountBlock')
@@ -91,7 +91,7 @@ function hookdisplayMyAccountBlock($params){
 
     }
 
-    public function makeToken($id_customer) {
-        return md5(_COOKIE_KEY_.$id_customer.date("Ymd"));
+    public function makeToken($salt='') {
+        return md5(_COOKIE_KEY_.$salt);
     }
 }

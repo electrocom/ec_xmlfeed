@@ -16,10 +16,18 @@
     </p>
     <p>
 
-      Pełen plik  XML:  <a href="{$url_generate}"> {$url_generate} </a>
+      Pełen plik  XML:  <a href="{$url_generate_full}"> {$url_generate_full} </a>
     </p>
 
+    <p>
 
+        Mały plik  XML:  <a href="{$url_generate_small}"> {$url_generate_small} </a>
+    </p>
+
+    <p>
+
+        Plik RSS:  <a href="{$url_generate_rss}"> {$url_generate_rss} </a>
+    </p>
 
 {/block}
 

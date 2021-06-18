@@ -6,7 +6,9 @@ use \FluidXml\FluidNamespace;
 use function \FluidXml\fluidxml;
 use function \FluidXml\fluidns;
 use function \FluidXml\fluidify;
+use PrestaShop\Module\Ec_Xmlfeed\Classes\FacebookFeed;
 
+use PrestaShop\Module\Ec_Xmlfeed\Classes\FeedGenerator;
 /**
  * Class Ec_XmlfeedGenerateModuleFrontController
  */
@@ -19,55 +21,63 @@ class Ec_XmlfeedGenerateModuleFrontController extends ModuleFrontController
     public $ajax;
     private $xml=null;
     private $xmlDataMaps;
+    private $formatxml=null;
+    private $id_customer=0;
 
-    public function postProcess() {
+public function postProcess() {
         parent::postProcess();
-        $id_customer = (int)Tools::getValue('id_customer');
-        if(!$id_customer || $id_customer < 0){
-            die('bad $id_customer');
-        }
-        $xTokenOk = Tools::getValue('token') == $this->module->makeToken($id_customer);
+
+        $this->id_customer = (int)Tools::getValue('id_customer');
+        $xTokenOk = Tools::getValue('token') == $this->module->makeToken($this->id_customer);
         if(!$xTokenOk){
-            die('bad xtoken');
+            die('bad xtoken1');
         }
-        $customer = new Customer($id_customer);
-        if (!Validate::isLoadedObject($customer)){
-            die('bad customer object');
+
+        $this->formatxml=Tools::getValue('format');
+        if(empty($this->formatxml)){
+            die('bad xml format');
         }
-        $customer->logged = 1;
-        $this->context->customer = $customer;
-        $this->context->cookie->id_customer = $customer->id;
-        $this->context->cookie->customer_lastname = $customer->lastname;
-        $this->context->cookie->customer_firstname = $customer->firstname;
-        $this->context->cookie->logged = 1;
-        $this->context->cookie->check_cgv = 1;
-        $this->context->cookie->is_guest = $customer->isGuest();
-        $this->context->cookie->passwd = $customer->passwd;
-        $this->context->cookie->email = $customer->email;
+
     }
 
-    public function display()
+public function display()
     {
-        if (!$this->context->customer->isLogged()){
-            die('ACCESS DENIED');
-        }
-
-        $this->xmlDataMaps= $this->get('xmlfeed_xml_feeds_xml_data_mapper'); // Dane produktów
-      $repFeeds= $this->container->get('xmlfeed_xml_feeds_repository'); //nazwy generowanych struktu
-      $feedStruct = $repFeeds->getFeed('Ceneo');
-        $xmlStruct = $feedStruct->getFields();
 
 
-            $this->buildXmlTree($xmlStruct,'',$this->xmlDataMaps);
 
+        $feedGenerator = new FeedGenerator($this->formatxml);
 
-        header("Content-type: text/xml");
-        echo $this->xml->xml();
-
+        $feedGenerator->getXml();
+die();
     }
 
 
-    private function buildXmlTree( &$xmlStruct,$xpath='',$current_data=null)
+private function builCustomXml(){
+
+    if (!$this->context->customer->isLogged()){
+        die('ACCESS DENIED');
+    }
+
+
+    $this->xmlDataMaps= $this->get('xmlfeed_xml_feeds_xml_data_mapper'); // Dane produktów
+    $repFeeds= $this->container->get('xmlfeed_xml_feeds_repository'); //nazwy generowanych struktu
+    $feedStruct = $repFeeds->getFeed($this->formatxml);
+    if(empty($feedStruct)){
+        die('bad xml format');
+    }
+    set_time_limit ( 180 ) ;
+    $xmlStruct = $feedStruct->getFields();
+
+
+    $this->buildXmlTree($xmlStruct,'',$this->xmlDataMaps);
+
+
+    header("Content-type: text/xml");
+    echo $this->xml->xml();
+
+}
+
+private function buildXmlTree( &$xmlStruct,$xpath='',$current_data=null)
     {
 
         foreach ($xmlStruct as $key =>$field)
@@ -76,8 +86,7 @@ class Ec_XmlfeedGenerateModuleFrontController extends ModuleFrontController
             $is_arr=0;
             $path=str_replace('[]','',$path,$is_arr);
 
-            if($xpath!=''
-                &&!strstr($path,$xpath))
+            if($xpath!=''&&!strstr($path,$xpath))
                 continue;
 
 
@@ -103,7 +112,7 @@ class Ec_XmlfeedGenerateModuleFrontController extends ModuleFrontController
     }
 
 
-    private function addToXmlTree($path,$data='',$cdata=0)
+private function addToXmlTree($path,$data='',$cdata=0)
     {
 
         if ($this->xml == null) {
@@ -132,5 +141,28 @@ class Ec_XmlfeedGenerateModuleFrontController extends ModuleFrontController
             else
             $current_node->add(end($explode_path),  true)->setText($data);
     }
+
+
+private function logInbyIdCustomer($id_customer){
+
+    if(!$id_customer || $id_customer < 0){
+        die('bad $id_customer');
+    }
+
+    $customer = new Customer($id_customer);
+    if (!Validate::isLoadedObject($customer)){
+        die('bad customer object');
+    }
+    $customer->logged = 1;
+    $this->context->customer = $customer;
+    $this->context->cookie->id_customer = $customer->id;
+    $this->context->cookie->customer_lastname = $customer->lastname;
+    $this->context->cookie->customer_firstname = $customer->firstname;
+    $this->context->cookie->logged = 1;
+    $this->context->cookie->check_cgv = 1;
+    $this->context->cookie->is_guest = $customer->isGuest();
+    $this->context->cookie->passwd = $customer->passwd;
+    $this->context->cookie->email = $customer->email;
+}
 
 }
