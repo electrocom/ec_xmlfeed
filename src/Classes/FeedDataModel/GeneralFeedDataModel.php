@@ -61,8 +61,28 @@ private $tilte;
         $this->link = $link;
         return $this;
     }
-    private$description;
-    private$link;
+    private $description;
+    private $link;
+    private $new_products=0;
+
+    /**
+     * @return int
+     */
+    public function getNewProducts(): int
+    {
+        return $this->new_products;
+    }
+
+    /**
+     * @param int $new_products
+     * @return GeneralFeedDataModel
+     */
+    public function setNewProducts(int $new_products): GeneralFeedDataModel
+    {
+        $this->new_products = $new_products;
+        return $this;
+    }
+
     public function __construct()
     {
     }

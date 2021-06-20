@@ -8,68 +8,17 @@
 
 class GoogleFeed
 {
-    private $filter_id_categories;
-    private $filter_id_manufacturers;
-    private $filter_ceneo_best_prices;
-    private $feed_name;
+
+
     public function __construct()
     {
-         $this->filter_id_categories=null;
-         $this->filter_id_manufacturers=null;
-        $this->filter_ceneo_best_prices=null;
+
     }
 
-    /**
-     * @param mixed $feed_name
-     */
-    public function setFeedName($feed_name)
-    {
-        $this->feed_name = $feed_name;
-    }
-    /**
-     * @param mixed $filter_ceneo_best_prices
-     */
-    public function setFilterCeneoBestPrices($filter_ceneo_best_prices)
-    {
-        $this->filter_ceneo_best_prices = $filter_ceneo_best_prices;
-    }
-    /**
-     * @param null $filter_id_manufacturers
-     */
-    public function setFilterIdManufacturers($filter_id_manufacturers)
-    {
-        $this->filter_id_manufacturers = $filter_id_manufacturers;
-    }
-
-    /**
-     * @param null $filter_id_categories
-     */
-    public function setFilterIdCategories($filter_id_categories)
-    {
-        $this->filter_id_categories = $filter_id_categories;
-    }
-
-    function generateXML($tofile=false){
-
-        if (isset(Context::getContext()->controller)) {
-            $controller = Context::getContext()->controller;
-        } else {
-
-            $controller = new FrontController();
-
-            $controller->init();
-
-        }
-
-        function CheckIsLogged()
-        {
-            if (Context::getContext()->customer->isLogged()) {
-                Context::getContext()->customer->logout();
-                die ('Błąd użytkownik zalogowany');
 
 
-            }
-        }
+    function generateXML(){
+
 
         $link = Context::getContext()->link;
         $nsUrl = 'http://base.google.com/ns/1.0';
@@ -100,34 +49,12 @@ class GoogleFeed
                 $img_cunter++;
             }
 
-            $merchant=array(
-                'id_product' => $val['id_product'],
-                'image_link' =>    $link->getImageLink($product->link_rewrite[1], Product::getCover( $val['id_product'] )['id_image']) ,
-                'name' =>ucfirst(strtolower($product->name['1'])),
-                'additional_images_link' =>$images_link,
-                'description' =>  html_entity_decode( strip_tags( $product->description['1'] ) ) ,
-                'brand'=> $manufacturer->name,
-                'link' =>$product->getLink(),
-                'quantity'=>Product::getQuantity($val['id_product']),
-                'ean13' =>$product->ean13,
-                'price' =>   Tools::ps_round($product->getPrice(), 2),
-                'custom_label' =>$this->feed_name
-            );
 
             //print_r($merchant);
             $this->process_simple_product($merchant, $channelNode, $doc);
         }
 
 
-        if($tofile){
-            echo  $file=_PS_ROOT_DIR_.'/'.$tofile.CrudTools::getToken().'.xml';
-
-            file_put_contents($file,   $doc->saveXML());
-        }
-        else{
-            header("Content-Type: application/xml; charset=utf-8");
-            echo $doc->saveXML();
-        }
 
     }
 
@@ -168,37 +95,4 @@ class GoogleFeed
 
     }
 
-    function getData(){
-        $sql_criteria='';
-        if($this->filter_ceneo_best_prices) {
-            $sql_join_ceneo = 'LEFT JOIN ps_ec_ceneo_analitycs ca on   ca.id_product=ps.id_product';
-            $sql_where_ceneobestprice = ' AND ca.current_price-ca.ceneo_price_with_delivery<0'; //tylko prudykty z najlepszą cena
-        }
-
-        $sql_criteria = $this->MakeIn( $this->filter_id_manufacturers,'id_manufacturer');
-        $sql_criteria .= $this->MakeIn( $this->filter_id_categories,'id_category');
-        $sql='SELECT ps.* FROM `ps_product_shop` ps inner join `ps_category_product` on `ps_category_product`.`id_product`=ps.id_product
-INNER JOIN `ps_product` p ON p.id_product=ps.id_product
-INNER JOIN `ps_stock_available` on `ps`.`id_product`=`ps_stock_available`.`id_product` AND ps.id_shop=ps_stock_available.id_shop
-'.$sql_join_ceneo.'
-WHERE
- ps.`price` > 0
- AND ps.`active` = 1
- AND ps.id_shop=1 '.$sql_criteria.$sql_where_ceneobestprice;
-        $data = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
-        return $data;
-    }
-
-    function MakeIn($arr,$name): string{
-        if(!empty($arr))
-        {
-            $sql = ' AND '.$name.' IN(';
-            foreach ($arr as  $value) {
-                $sql .= $value;
-                $sql .= $value === end($arr) ? '' : ',';
-            }
-            return $sql .= ')';
-        }        else
-            return '';
-    }
 }

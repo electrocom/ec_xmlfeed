@@ -10,7 +10,10 @@ START TRANSACTION;
   CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_feeds` (
   `id_xml_feeds` int(11) NOT NULL AUTO_INCREMENT,
   `feed_name` varchar(255) NOT NULL,
+  `filter` varchar(255)  NULL,
+  `format` varchar(20) NOT NULL,
   `active` tinyint(1) NOT NULL,
+ 
   PRIMARY KEY (`id_xml_feeds`)
 ) ENGINE=InnoDB;
 
@@ -26,9 +29,10 @@ CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_map_fields` (
   PRIMARY KEY (`id_xml_map_fields`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `"._DB_PREFIX_."xml_feeds` (`id_xml_feeds`, `feed_name`, `active`) VALUES
-(1, 'ceneo', 1),
-(2, 'smallxml', 1);
+INSERT INTO `"._DB_PREFIX_."xml_feeds` (`id_xml_feeds`, `feed_name`, `active`, `format`) VALUES
+(1, 'ceneo', 1, 'ceneo'),
+(2, 'smallxml', 1, 'smallxml'),
+(2, 'facebook', 1, 'facebook');
 
 INSERT INTO "._DB_PREFIX_."xml_map_fields (id_xml_map_fields, id_xml_feeds, shop_field_name, xml_field_path_name, custom_value, cdata, `position`, active) VALUES
 (7, 1, '', 'offers', '', 0, 1, 1),

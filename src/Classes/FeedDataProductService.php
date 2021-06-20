@@ -12,37 +12,37 @@ use PrestaShop\Module\Ec_Xmlfeed\Classes\FeedDataModel\GeneralFeedDataModel;
 use PrestaShop\Module\Ec_Xmlfeed\Classes\FeedDataModel\ProductFeedDataModel;
 class FeedDataProductService{
 
-    protected $filter_id_categories;
-    protected $filter_id_manufacturers;
     protected $filter_ceneo_best_prices;
     private   $feedTools;
     private   $feedData;
+    private $criteria;
 
-    public function __construct()
+    public function __construct(FeedFilterCriteria $criteria)
     {
-        $this->filter_id_categories=null;
-        $this->filter_id_manufacturers=null;
+
         $this->filter_ceneo_best_prices=null;
         $this->feedTools= new FeedTools();
         $this->feedData=new FeedDataModel();
-
+        $this->criteria=$criteria;
     }
 
    private function getDataSql(){
        $id_shop = (int)\Context::getContext()->shop->id;
         $sql_join_ceneo ='';
         $sql_where_ceneobestprice='';
-        $sql_criteria='';
+
         if($this->filter_ceneo_best_prices) {
             $sql_join_ceneo = 'LEFT JOIN ps_ec_ceneo_analitycs ca on   ca.id_product=ps.id_product';
             $sql_where_ceneobestprice = ' AND ca.current_price-ca.ceneo_price_with_delivery<=0'; //tylko prudykty z najlepszą cena
         }
 
-        $sql_criteria = $this->MakeIn( $this->filter_id_manufacturers,'id_manufacturer');
-        $sql_criteria .= $this->MakeIn( $this->filter_id_categories,'id_category');
+        $sql_criteria = $this->MakeIn( $this->criteria->getIdsManufacturers(),'id_manufacturer');
+        $sql_criteria .= $this->MakeIn( $this->criteria->getIdsCategories(),'id_category');
+
         $sql='SELECT ps.* FROM `ps_product_shop` ps 
 INNER JOIN `ps_product` p ON p.id_product=ps.id_product
 INNER JOIN `ps_stock_available` on `ps`.`id_product`=`ps_stock_available`.`id_product` AND ps.id_shop=ps_stock_available.id_shop
+INNER JOIN `ps_category_product`  cp ON cp.id_product=ps.id_product
 '.$sql_join_ceneo.'
 WHERE ps.`price` > 0
  AND ps.`active` = 1
@@ -56,14 +56,15 @@ WHERE ps.`price` > 0
         foreach ($items as $val) {
 
             $productFeedModel = new ProductFeedDataModel();
+            $context = \Context::getContext();
             $link = \Context::getContext()->link;
-           $id_lang= \Context::getContext()->cookie->id_lang;
+            $id_lang= \Context::getContext()->language->id;
 
             $product = new Product((int)$val['id_product']);
             $manufacturer = new Manufacturer((int)$product->id_manufacturer);
             $productFeedModel->setIdProduct($val['id_product']);
-            $productFeedModel->setImageLink($link->getImageLink($product->link_rewrite[1], Product::getCover($val['id_product'])['id_image']));
-            $productFeedModel->setName(ucfirst(mb_strtolower($product->name['1'], 'UTF-8')));
+            $productFeedModel->setImageLink($link->getImageLink($product->link_rewrite[$id_lang], Product::getCover($val['id_product'])['id_image']));
+            $productFeedModel->setName(ucfirst(mb_strtolower($product->name[$id_lang], 'UTF-8')));
             $productFeedModel->setAdditionalImagesLink($this->feedTools->getProductImagesLink($product));
             $productFeedModel->setBrand($manufacturer->name);
             $productFeedModel->setLink($product->getLink());
@@ -95,21 +96,7 @@ WHERE ps.`price` > 0
     {
         $this->filter_ceneo_best_prices = $filter_ceneo_best_prices;
     }
-    /**
-     * @param null $filter_id_manufacturers
-     */
-    public function setFilterIdManufacturers($filter_id_manufacturers)
-    {
-        $this->filter_id_manufacturers = $filter_id_manufacturers;
-    }
 
-    /**
-     * @param null $filter_id_categories
-     */
-    public function setFilterIdCategories($filter_id_categories)
-    {
-        $this->filter_id_categories = $filter_id_categories;
-    }
 
     function MakeIn($arr,$name): string{
         if(!empty($arr))

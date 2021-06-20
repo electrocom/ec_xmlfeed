@@ -1,6 +1,9 @@
 <?php
 namespace PrestaShop\Module\Ec_Xmlfeed\Classes;
-
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Db;
 use DOMDocument;
 use Manufacturer;
@@ -9,7 +12,7 @@ use Product;
 use Tools;
 use PrestaShop\Module\Ec_Xmlfeed\Classes\FeedDataModel\FeedDataModel;
 use PrestaShop\Module\Ec_Xmlfeed\Classes\FeedDataProductService;
-
+use PrestaShop\Module\Ec_Xmlfeed\Entity\XmlFeeds;
 class FeedGenerator {
     protected $format;
 
@@ -17,13 +20,17 @@ class FeedGenerator {
     protected $context;
     private  $feedDataProductService;
     private  $feed;
+    private  $serializer;
 
 
-
-    public function __construct($format='facebook')
+    public function __construct(XmlFeeds $FeedData )
     {
-        $this->format=$format;
-        $this->feedDataProductService=new FeedDataProductService();
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $this->serializer = new Serializer($normalizers, $encoders);
+        $filter=$this->serializer->deserialize($FeedData->getFilter(),FeedFilterCriteria::class, 'json');
+        $this->format=$FeedData->getFormat();
+        $this->feedDataProductService=new FeedDataProductService($filter);
 
     }
 
@@ -38,7 +45,7 @@ class FeedGenerator {
 
                 break;
 
-            case 'Ceneo':
+            case 'ceneo':
                 $this->feed = new FeedCeneo($data_xml);
 
                 break;

@@ -91,6 +91,55 @@ class XmlFeeds
     {
         $this->active = $active;
     }
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="format" , type="string",length=20 )
+     */
+    private $format;
+
+    /**
+     * @return string
+     */
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $format
+     * @return XmlFeeds
+     */
+    public function setFormat(string $format): XmlFeeds
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="filter" , type="string",length=254 )
+     */
+    private $filter;
+
+    /**
+     * @return string
+     */
+    public function getFilter(): string
+    {
+        return $this->filter;
+    }
+
+    /**
+     * @param string $filter
+     * @return XmlFeeds
+     */
+    public function setFilter(string $filter): XmlFeeds
+    {
+        $this->filter = $filter;
+        return $this;
+    }
 
     /**
      * @ORM\OneToMany(targetEntity="XmlMapFields", mappedBy="feed")
