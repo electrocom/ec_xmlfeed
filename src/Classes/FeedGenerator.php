@@ -56,6 +56,12 @@ class FeedGenerator {
                 break;
 
 
+            case 'skapiec':
+                $this->feed = new SkapiecFeed($data_xml);
+
+                break;
+
+
             default:
 
                 $this->feed = new FacebookFeed($data_xml);

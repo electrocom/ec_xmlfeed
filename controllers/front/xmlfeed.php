@@ -21,18 +21,33 @@ class Ec_XmlfeedXmlfeedModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $viewFeedList=array();
+
+        $repFeeds= $this->container->get('xmlfeed_xml_feeds_repository'); //nazwy generowanych struktu
 
         $id_customer=$this->context->customer->id;
         $token_xml=$this->module->makeToken($id_customer);
-        $url_generate_small= $this->context->link->getModuleLink('ec_xmlfeed', 'generate', array('token'=>$token_xml,'id_customer'=>$id_customer,'format'=>'smallxml'), Configuration::get('PS_SSL_ENABLED'));
-        $url_generate_full= $this->context->link->getModuleLink('ec_xmlfeed', 'generate', array('token'=>$token_xml,'id_customer'=>$id_customer,'format'=>'Ceneo'), Configuration::get('PS_SSL_ENABLED'));
-        $url_rss= $this->context->link->getModuleLink('ec_xmlfeed', 'generate', array('token'=>$this->module->makeToken(0),'format'=>'facebook'), Configuration::get('PS_SSL_ENABLED'));
+
+        foreach ($repFeeds->getXmlFeeds() as $val){
+
+            $viewFeedList[]=array(
+
+                "desc"=>$val["desc"],
+                "name"=>$val["feed_name"],
+                  'link'=>$val=$this->context->link->getModuleLink('ec_xmlfeed', 'generate', array('token'=>$token_xml,'format'=>$val['feed_name'],'id_customer'=>$id_customer), Configuration::get('PS_SSL_ENABLED')),
+            );
+
+    }
+
+
+
 
 
         $this->context->smarty->assign('header_title','Eksport Xml');
-        $this->context->smarty->assign('url_generate_small',$url_generate_small);
-        $this->context->smarty->assign('url_generate_full',$url_generate_full);
-        $this->context->smarty->assign('url_generate_rss',$url_rss);
+        $this->context->smarty->assign('viewFeedList',$viewFeedList);
+  ;
         $this->context->smarty->assign('token_xml',$token_xml);
         $this->context->smarty->assign('id_customer',$id_customer);
 

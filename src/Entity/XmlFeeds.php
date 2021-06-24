@@ -29,6 +29,31 @@ class XmlFeeds
     private $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="desc" , type="string", length=254)
+     */
+    private $desc;
+
+    /**
+     * @return mixed
+     */
+    public function getDesc()
+    {
+        return $this->desc;
+    }
+
+    /**
+     * @param mixed $desc
+     * @return XmlFeeds
+     */
+    public function setDesc($desc)
+    {
+        $this->desc = $desc;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

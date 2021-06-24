@@ -1,6 +1,7 @@
 <?php
 namespace PrestaShop\Module\Ec_Xmlfeed\Classes;
 
+use Category;
 use Db;
 use DOMDocument;
 use Manufacturer;
@@ -30,23 +31,34 @@ class FeedDataProductService{
        $id_shop = (int)\Context::getContext()->shop->id;
         $sql_join_ceneo ='';
         $sql_where_ceneobestprice='';
+        $sql_join_cat_criteria='';
+        $sql_criteria='';
 
         if($this->filter_ceneo_best_prices) {
             $sql_join_ceneo = 'LEFT JOIN ps_ec_ceneo_analitycs ca on   ca.id_product=ps.id_product';
             $sql_where_ceneobestprice = ' AND ca.current_price-ca.ceneo_price_with_delivery<=0'; //tylko prudykty z najlepszą cena
         }
 
-        $sql_criteria = $this->MakeIn( $this->criteria->getIdsManufacturers(),'id_manufacturer');
-        $sql_criteria .= $this->MakeIn( $this->criteria->getIdsCategories(),'id_category');
+        if( !empty($this->criteria->getIdsCategories())){
+            $sql_join_cat_criteria=' INNER JOIN `ps_category_product`  cp ON cp.id_product=ps.id_product ' ;
+            $sql_join_cat_criteria.= $this->MakeIn( $this->criteria->getIdsCategories(),'cp.id_category');
+        }
+
+        if($this->criteria->isOnlyavailable()){
+            $sql_criteria.=' and `ps_stock_available`.`quantity` >0 ';
+        }
+
+        $sql_criteria .= $this->MakeIn( $this->criteria->getIdsManufacturers(),'id_manufacturer');
 
         $sql='SELECT ps.* FROM `ps_product_shop` ps 
 INNER JOIN `ps_product` p ON p.id_product=ps.id_product
 INNER JOIN `ps_stock_available` on `ps`.`id_product`=`ps_stock_available`.`id_product` AND ps.id_shop=ps_stock_available.id_shop
-INNER JOIN `ps_category_product`  cp ON cp.id_product=ps.id_product
+'.$sql_join_cat_criteria.'
 '.$sql_join_ceneo.'
 WHERE ps.`price` > 0
  AND ps.`active` = 1
  AND ps.id_shop='.$id_shop.' '.$sql_criteria.$sql_where_ceneobestprice;
+//die($sql);
         $data = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
         return $data;
     }
@@ -72,6 +84,7 @@ WHERE ps.`price` > 0
             $productFeedModel->setEan13($product->ean13);
             $productFeedModel->setPrice(Tools::ps_round($product->getPrice(), 2));
             $productFeedModel->setCategoryPath( $this->feedTools->getCategoryPath($product->id_category_default));
+            $productFeedModel->setCategoryName( (new Category($product->id_category_default, $id_lang))->name);
             $productFeedModel->setReference($product->reference);
             $productFeedModel->setDescription($product->description[$id_lang]);
 
@@ -101,7 +114,7 @@ WHERE ps.`price` > 0
     function MakeIn($arr,$name): string{
         if(!empty($arr))
         {
-            $sql = ' AND '.$name.' IN(';
+            $sql = ' and '.$name.' IN(';
             foreach ($arr as  $value) {
                 $sql .= $value;
                 $sql .= $value === end($arr) ? '' : ',';

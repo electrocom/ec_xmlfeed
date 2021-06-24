@@ -58,14 +58,14 @@ class FacebookFeed
         $itemNode = $channelNode->appendChild($doc->createElement('item'));
 
         $itemNode->appendChild($doc->createElement('g:id'))->appendChild($doc->createTextNode($_product->getIdProduct()));
-        $itemNode->appendChild($doc->createElement('g:title'))->appendChild($doc->createTextNode(htmlspecialchars($_product->getName())));
-        $itemNode->appendChild($doc->createElement('g:description'))->appendChild(  $doc->createTextNode( htmlspecialchars($this->utf8_for_xml($_product->getDescription())) ));
-        $itemNode->appendChild($doc->createElement('g:image_link'))->appendChild($doc->createTextNode(htmlspecialchars($_product->getImageLink())));
+        $itemNode->appendChild($doc->createElement('g:title'))->appendChild($doc->createTextNode(($_product->getName())));
+        $itemNode->appendChild($doc->createElement('g:description'))->appendChild(  $doc->createTextNode( ($this->utf8_for_xml($_product->getDescription())) ));
+        $itemNode->appendChild($doc->createElement('g:image_link'))->appendChild($doc->createTextNode(($_product->getImageLink())));
 
         foreach($_product->getAdditionalImagesLink() as $additional_image_link )
-        $itemNode->appendChild($doc->createElement('g:additional_image_link'))->appendChild($doc->createTextNode(htmlspecialchars($additional_image_link)));
+        $itemNode->appendChild($doc->createElement('g:additional_image_link'))->appendChild($doc->createTextNode(($additional_image_link)));
 
-        $itemNode->appendChild($doc->createElement('g:brand'))->appendChild($doc->createTextNode(htmlspecialchars($_product->getBrand())));
+        $itemNode->appendChild($doc->createElement('g:brand'))->appendChild($doc->createTextNode(($_product->getBrand())));
         $itemNode->appendChild($doc->createElement('g:link'))->appendChild($doc->createTextNode($_product->getLink()));
 
         if (strlen($_product->getEan13()) > 7) {

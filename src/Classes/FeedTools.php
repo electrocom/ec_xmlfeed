@@ -53,7 +53,7 @@ return $images_link;
    }
 
 
-    function getCategoryPath($id_category){
+    function getCategoryPath($id_category,$witoutlast=0){
 
         $context = \Context::getContext();
         $home=false;
@@ -78,13 +78,22 @@ return $images_link;
 
             $categories = \Db::getInstance()->executeS($sql);
             $full_path = '';
-            $n = 1;
+            $n = 0;
             $n_categories = (int)count($categories);
+
+
+
             foreach ($categories as $category) {
+
                 if($category['level_depth']>3)
                     continue;
 
-                $full_path .= '/'.htmlentities($category['name']);
+               // if($witoutlast&&$n<$n_categories)
+                //    continue;
+
+                $full_path .= '/'.$category['name'];
+
+                $n++;
             }
             return $full_path.$path;
         }

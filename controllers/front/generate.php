@@ -57,10 +57,11 @@ public function display()
 
       //  $filter= $serializer->deserialize($feedData->getFilter(),FeedFilterCriteria::class, 'json');
 
-       //$filter= new FeedFilterCriteria();
-        //$filter->idsCategories=array(13,11);
-        //$feedStruct->setFilter( json_encode($filter));
-    //    $entityManager->persist($feedStruct);
+     //  $filter= new FeedFilterCriteria();
+       //$filter->idsCategories=array(13,11);
+       //$json_filter=json_encode($filter);
+       //$feedData->setFilter($json_filter );
+       //$entityManager->persist($feedData);
         //$entityManager->flush();
 
 

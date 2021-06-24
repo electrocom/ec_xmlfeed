@@ -14,20 +14,17 @@
        <b>Twój token dostępowy:</b>  {$token_xml} <br>
         <b>Twój identyfikator użytkownika:</b>{$id_customer}
     </p>
-    <p>
 
-      Pełen plik  XML:  <a href="{$url_generate_full}"> {$url_generate_full} </a>
-    </p>
+    {foreach from=$viewFeedList item=foo}
+        <p>
 
-    <p>
+            {$foo.name}  {$foo.desc}:  <a href="{$foo.link}"> {$foo.link} </a>
+        </p>
 
-        Mały plik  XML:  <a href="{$url_generate_small}"> {$url_generate_small} </a>
-    </p>
+    {/foreach}
 
-    <p>
 
-        Plik RSS:  <a href="{$url_generate_rss}"> {$url_generate_rss} </a>
-    </p>
+
 
 {/block}
 

@@ -13,6 +13,7 @@ START TRANSACTION;
   `filter` varchar(255)  NULL,
   `format` varchar(20) NOT NULL,
   `active` tinyint(1) NOT NULL,
+  `desc`   varchar(255)  NULL,
  
   PRIMARY KEY (`id_xml_feeds`)
 ) ENGINE=InnoDB;
@@ -29,12 +30,12 @@ CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."xml_map_fields` (
   PRIMARY KEY (`id_xml_map_fields`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `"._DB_PREFIX_."xml_feeds` (`id_xml_feeds`, `feed_name`, `active`, `format`) VALUES
-(1, 'ceneo', 1, 'ceneo'),
-(2, 'smallxml', 1, 'smallxml'),
-(2, 'facebook', 1, 'facebook');
+INSERT IGNORE INTO  `"._DB_PREFIX_."xml_feeds` (`id_xml_feeds`, `feed_name`, `active`, `format`, `filter`) VALUES
+(1, 'ceneo', 1, 'ceneo',  '{\"idsCategories\":[13,11],\"idsManufacturers\":[],\"onlyavailable\":false}'),
+(2, 'smallxml', 1, 'smallxml',  '{\"idsCategories\":[13,11],\"idsManufacturers\":[],\"onlyavailable\":false}'),
+(3, 'facebook', 1, 'facebook',  '{\"idsCategories\":[13,11],\"idsManufacturers\":[],\"onlyavailable\":false}');
 
-INSERT INTO "._DB_PREFIX_."xml_map_fields (id_xml_map_fields, id_xml_feeds, shop_field_name, xml_field_path_name, custom_value, cdata, `position`, active) VALUES
+INSERT IGNORE INTO  "._DB_PREFIX_."xml_map_fields (id_xml_map_fields, id_xml_feeds, shop_field_name, xml_field_path_name, custom_value, cdata, `position`, active) VALUES
 (7, 1, '', 'offers', '', 0, 1, 1),
 (9, 1, '', 'offers/@version', '1', 0, 3, 1),
 (10, 1, 'products', 'offers/o[]', '', 0, 4, 1),
@@ -68,7 +69,7 @@ INSERT INTO "._DB_PREFIX_."xml_map_fields (id_xml_map_fields, id_xml_feeds, shop
 COMMIT;
 ";
 
-
+ //die($sql);
 
         Db::getInstance()->execute($sql);
     }

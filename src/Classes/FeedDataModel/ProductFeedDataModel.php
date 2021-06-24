@@ -208,6 +208,27 @@ class ProductFeedDataModel
      * @param mixed $category_path
      * @return ProductFeedDataModel
      */
+
+  private  $category_name;
+
+    /**
+     * @return mixed
+     */
+    public function getCategoryName()
+    {
+        return $this->category_name;
+    }
+
+    /**
+     * @param mixed $category_name
+     * @return ProductFeedDataModel
+     */
+    public function setCategoryName($category_name)
+    {
+        $this->category_name = $category_name;
+        return $this;
+    }
+
     public function setCategoryPath($category_path)
     {
         $this->category_path = $category_path;
